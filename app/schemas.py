@@ -1,21 +1,28 @@
-SCRUM_OUTPUT_SCHEMA = """
-STRICT JSON OUTPUT ONLY:
+from pydantic import BaseModel, Field, validator
+from typing import List
 
-{
-  "user_story": "...",
-  "acceptance_criteria": ["..."],
-  "definition_of_done": ["..."],
-  "technical_approach": "...",
-  "test_cases": ["..."],
-  "story_points": number,
-  "priority": "Low | Medium | High",
-  "confidence": "Low | Medium | High",
-  "estimation_reasoning": "...",
-  "risks": ["..."]
-}
+VALID_POINTS = {1, 2, 3, 5, 8, 13}
 
-RULES:
-- Return ONLY JSON
-- No extra text
-- story_points must be Fibonacci: 1,2,3,5,8,13
-"""
+class ScrumOutput(BaseModel):
+    user_story: str
+    acceptance_criteria: List[str]
+    definition_of_done: List[str]
+    technical_approach: str
+    test_cases: List[str]
+    story_points: int
+    priority: str
+    confidence: str
+    estimation_reasoning: str
+    risks: List[str]
+
+    @validator("story_points")
+    def validate_story_points(cls, v):
+        if v not in VALID_POINTS:
+            raise ValueError("Invalid story points")
+        return v
+
+    @validator("priority")
+    def validate_priority(cls, v):
+        if v not in ["Low", "Medium", "High"]:
+            raise ValueError("Invalid priority")
+        return v
