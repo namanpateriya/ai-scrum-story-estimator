@@ -6,24 +6,41 @@ from app.aggregator import normalize_output
 
 logger = logging.getLogger(__name__)
 
+MAX_RETRIES = 2
+
 def run_scrum_team(input_text: str):
-    try:
-        if not input_text.strip():
-            raise ValueError("Empty input")
+    if not input_text.strip():
+        raise ValueError("Empty input")
 
-        po, dev, qa, sm = get_agents()
-        tasks = get_tasks(input_text, po, dev, qa, sm)
+    po, dev, qa, sm = get_agents()
+    tasks = get_tasks(input_text, po, dev, qa, sm)
 
-        crew = Crew(
-            agents=[po, dev, qa, sm],
-            tasks=tasks,
-            verbose=True
-        )
+    crew = Crew(
+        agents=[po, dev, qa, sm],
+        tasks=tasks,
+        verbose=True
+    )
 
-        result = crew.kickoff()
+    for attempt in range(MAX_RETRIES):
+        try:
+            logger.info(f"Running CrewAI (attempt {attempt+1})")
 
-        return normalize_output(result)
+            result = crew.kickoff()
 
-    except Exception as e:
-        logger.error(f"Scrum execution failed: {str(e)}")
-        raise
+            logger.info("Raw Output Received")
+            logger.info(result)
+
+            normalized = normalize_output(result)
+
+            if "error" not in normalized:
+                return normalized
+
+            logger.warning("Invalid output, retrying...")
+
+        except Exception as e:
+            logger.error(f"Crew execution failed: {str(e)}")
+
+    return {
+        "error": "Failed after retries",
+        "raw_output": result if 'result' in locals() else None
+    }
