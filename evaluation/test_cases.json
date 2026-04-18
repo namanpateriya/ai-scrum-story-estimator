@@ -1,0 +1,14 @@
+[
+  {
+    "input": "Fix login issue where users cannot sign in",
+    "expected_priority": "High"
+  },
+  {
+    "input": "Add search functionality for products",
+    "expected_priority": "Medium"
+  },
+  {
+    "input": "Change button color on homepage",
+    "expected_priority": "Low"
+  }
+]
