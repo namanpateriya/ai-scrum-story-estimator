@@ -4,7 +4,6 @@ import logging
 
 from app.service import run_scrum_team
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="AI Scrum Estimator")
