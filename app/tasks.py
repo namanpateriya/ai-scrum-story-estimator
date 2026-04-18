@@ -11,11 +11,13 @@ def get_tasks(input_text, po, dev, qa, sm):
 
     po_task = Task(
         description=f"""
+[PO OUTPUT REQUIRED]
+
 Create:
 - User Story
-- Acceptance Criteria (list)
-- Definition of Done (list)
-- Priority (Low/Medium/High)
+- Acceptance Criteria
+- Definition of Done
+- Priority
 
 {PRIORITY_RULES}
 
@@ -27,13 +29,15 @@ Input:
 
     dev_task = Task(
         description="""
+[DEV OUTPUT REQUIRED]
+
 Based ONLY on PO output:
 
 Provide:
 - Technical approach
 - Components
 - Complexity drivers
-- Initial story point estimate (Fibonacci: 1,2,3,5,8,13)
+- Initial story point estimate (Fibonacci only)
 """,
         agent=dev,
         context=[po_task]
@@ -41,6 +45,8 @@ Provide:
 
     qa_task = Task(
         description="""
+[QA OUTPUT REQUIRED]
+
 Based ONLY on PO + Dev outputs:
 
 Provide:
@@ -54,14 +60,14 @@ Provide:
 
     sm_task = Task(
         description="""
+[SM FINAL OUTPUT]
+
 Based on ALL outputs:
 
-Finalize:
-- Story points (must be Fibonacci: 1,2,3,5,8,13)
-- Confidence (Low/Medium/High)
+Return STRICT JSON:
+- Story points (Fibonacci)
+- Confidence
 - Estimation reasoning
-
-Return STRICT JSON ONLY.
 """,
         agent=sm,
         context=[po_task, dev_task, qa_task]
