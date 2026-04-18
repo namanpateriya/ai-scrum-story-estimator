@@ -19,6 +19,9 @@ def health():
 @app.post("/estimate")
 def estimate(data: InputModel):
     try:
+        if not data.input.strip():
+            raise HTTPException(400, "Empty input")
+
         logger.info("API request received")
 
         result = run_scrum_team(data.input)
