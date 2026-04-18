@@ -5,7 +5,6 @@ import sys
 
 from app.service import run_scrum_team
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -42,6 +41,10 @@ parser.add_argument("--refine", action="store_true")
 
 args = parser.parse_args()
 
+if args.input and args.file:
+    print("Use either --input or --file, not both")
+    sys.exit(1)
+    
 if args.input:
     run_single(args.input, args.refine)
 elif args.file:
