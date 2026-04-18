@@ -1,0 +1,52 @@
+# Demo Commands — AI Scrum Story Estimator
+
+# =========================
+# CLI EXECUTION
+# =========================
+
+# 1. Direct Mode (Single Input)
+python -m app.cli --input "Build login system with OTP"
+
+# 2. Direct Mode (Another Example)
+python -m app.cli --input "Add search functionality with filters and pagination"
+
+# 3. Batch Mode (From File)
+python -m app.cli --file sample_input.txt
+
+
+# =========================
+# API EXECUTION
+# =========================
+
+# Start Server
+uvicorn app.main:app --reload
+
+# Open Swagger UI:
+# http://127.0.0.1:8000/docs
+
+
+# 4. Direct Mode API
+curl -X POST "http://127.0.0.1:8000/estimate" \
+-H "Content-Type: application/json" \
+-d "{\"input\": \"Build login system with OTP\"}"
+
+
+# 5. Direct Mode API (Complex Input)
+curl -X POST "http://127.0.0.1:8000/estimate" \
+-H "Content-Type: application/json" \
+-d "{\"input\": \"Implement payment system with retries, refunds and fraud detection\"}"
+
+
+# 6. Batch Mode API
+curl -X POST "http://127.0.0.1:8000/estimate-batch" \
+-H "Content-Type: application/json" \
+-d "{\"inputs\": [\"Build login system\", \"Add product search\", \"Fix UI alignment issues\"]}"
+
+
+# =========================
+# 💡 NOTES
+# =========================
+
+# - Use simple inputs for quick validation
+# - Use complex inputs to test estimation depth
+# - Batch mode is best for backlog processing
