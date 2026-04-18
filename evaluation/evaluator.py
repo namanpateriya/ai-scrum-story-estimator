@@ -38,6 +38,9 @@ def check_structure(output: dict):
 def check_story_points(output):
     return output.get("story_points") in [1, 2, 3, 5, 8, 13]
 
+def safe_mean(values):
+    values = [v for v in values if v is not None]
+    return sum(values) / len(values) if values else 0
 
 # ------------------ LLM Judge ------------------ #
 
@@ -126,8 +129,8 @@ def summarize(results):
         "structure_accuracy": sum(r["structure_ok"] for r in valid) / total,
         "points_accuracy": sum(r["points_ok"] for r in valid) / total,
         "priority_accuracy": sum(r["priority_ok"] for r in valid) / total,
-        "avg_clarity": mean([r["judge_clarity"] for r in valid if r["judge_clarity"]]),
-        "avg_usefulness": mean([r["judge_usefulness"] for r in valid if r["judge_usefulness"]])
+        "avg_clarity": safe_mean([r["judge_clarity"] for r in valid if r["judge_clarity"]]),
+        "avg_usefulness": safe_mean([r["judge_usefulness"] for r in valid if r["judge_usefulness"]])
     }
 
     print("\n=== SUMMARY ===")
