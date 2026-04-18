@@ -1,5 +1,11 @@
 from crewai import Task
-from app.schemas import SCRUM_OUTPUT_SCHEMA
+
+PRIORITY_RULES = """
+Priority rules:
+- High → blockers, revenue impact, critical systems
+- Medium → feature improvements
+- Low → UI / minor enhancements
+"""
 
 def get_tasks(input_text, po, dev, qa, sm):
 
@@ -11,6 +17,8 @@ Create:
 - Definition of Done (list)
 - Priority (Low/Medium/High)
 
+{PRIORITY_RULES}
+
 Input:
 {input_text}
 """,
@@ -19,39 +27,44 @@ Input:
 
     dev_task = Task(
         description="""
-Based on PO output:
+Based ONLY on PO output:
+
+Provide:
 - Technical approach
 - Components
 - Complexity drivers
-- Initial story point estimate (Fibonacci scale)
+- Initial story point estimate (Fibonacci: 1,2,3,5,8,13)
 """,
-        agent=dev
+        agent=dev,
+        context=[po_task]
     )
 
     qa_task = Task(
         description="""
-Based on PO + Dev output:
+Based ONLY on PO + Dev outputs:
+
+Provide:
 - Test cases
 - Edge cases
 - Risks
 """,
-        agent=qa
+        agent=qa,
+        context=[po_task, dev_task]
     )
 
     sm_task = Task(
-        description=f"""
-Based on all outputs:
+        description="""
+Based on ALL outputs:
 
 Finalize:
-- Story points
-- Confidence
+- Story points (must be Fibonacci: 1,2,3,5,8,13)
+- Confidence (Low/Medium/High)
 - Estimation reasoning
 
-Return final output in this format:
-
-{SCRUM_OUTPUT_SCHEMA}
+Return STRICT JSON ONLY.
 """,
-        agent=sm
+        agent=sm,
+        context=[po_task, dev_task, qa_task]
     )
 
     return [po_task, dev_task, qa_task, sm_task]
