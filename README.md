@@ -25,7 +25,7 @@ Supports:
 * Priority assignment (Low / Medium / High)
 * Estimation reasoning + confidence level
 * JSON validation + auto-repair for malformed outputs
-* Schema validation using Pydantic
+* Schema validation
 * Basic consistency checks (effort vs complexity)
 * Batch processing (CLI + API)
 * Logging for observability (execution time, output size)
