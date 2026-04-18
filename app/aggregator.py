@@ -23,8 +23,13 @@ def safe_parse(raw):
 def repair_json(raw_output: str):
     try:
         prompt = f"""
-Fix this into VALID JSON matching schema:
+Fix into VALID JSON with EXACT fields:
 
+user_story, acceptance_criteria, definition_of_done,
+technical_approach, test_cases, story_points,
+priority, confidence, estimation_reasoning, risks
+
+INPUT:
 {raw_output}
 """
 
@@ -51,8 +56,13 @@ def validate_partial(data: dict):
         validated[field] = data.get(field)
 
     # enforce defaults
-    validated["story_points"] = validated.get("story_points") or 3
+    if validated.get("story_points") not in [1,2,3,5,8,13]:
+        validated["story_points"] = 3
     validated["priority"] = validated.get("priority") or "Medium"
+
+    for key in validated:
+    if validated[key] is None:
+        validated[key] = "" if isinstance(validated[key], str) else []
 
     return validated
 
